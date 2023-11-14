@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce.controller;
 
 import com.ecommerce.ecommerce.model.Dto.RegisterProductDto;
+import com.ecommerce.ecommerce.model.Mensaje;
 import com.ecommerce.ecommerce.model.entities.Product;
 import com.ecommerce.ecommerce.service.ProductService;
 import com.ecommerce.ecommerce.service.UploadFileService;
@@ -27,22 +28,60 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private UploadFileService upload;
+
+    @GetMapping
+    public ResponseEntity<Page<Product>> getProduct(@PageableDefault(size = 15) Pageable paginacion) {
+        Page<Product> products = this.productService.getProducts(paginacion);
+        return ResponseEntity.ok().body(products);
+    }
+
     @PostMapping
     public ResponseEntity<Product> registerProduct(@RequestParam("name")
-                                                       String name,
+                                                   String name,
                                                    @RequestParam("description")
-                                                       String description,
+                                                   String description,
                                                    @RequestParam("price")
-                                                       BigDecimal price,
-
-                                                       int stock,
+                                                   BigDecimal price,
+                                                   int stock,
                                                    @RequestParam("date")
-                                                       String date, @RequestParam("img") MultipartFile file)throws IOException {// cuando se crea un producto
-            String nameImagen= upload.saveImage(file);
+                                                   String date, @RequestParam("img") MultipartFile file) throws IOException {// cuando se crea un producto
 
-            var registerProductDto= new RegisterProductDto(name,description,price,stock,date);
-        Product product = this.productService.registerProduct(registerProductDto ,nameImagen);
+        String nameImagen = upload.saveImage(file);
+
+        var registerProductDto = new RegisterProductDto(name, description, price, stock, date);
+        Product product = this.productService.registerProduct(registerProductDto, nameImagen);
         return ResponseEntity.ok().body(product);
+
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Product> updateTopic(@RequestParam("name")
+                                               String name,
+                                               @RequestParam("description")
+                                               String description,
+                                               @RequestParam("price")
+                                               BigDecimal price,
+                                               int stock,
+                                               @RequestParam("date")
+                                               String date, @RequestParam("img") MultipartFile file, @PathVariable Long id) throws IOException
+    {
+
+        String nameImagen = upload.saveImage(file);
+
+        var updateProductDto = new RegisterProductDto(name, description, price, stock, date);
+
+        Product productUpdate = this.productService.updateProduct(updateProductDto, nameImagen, id);
+        return ResponseEntity.ok().body(productUpdate);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Mensaje> deleteProduct(@PathVariable Long id) {
+
+       Mensaje respMensaje =  this.productService.deleteProduct(id);
+
+        return ResponseEntity.ok().body(respMensaje);
 
     }
 
