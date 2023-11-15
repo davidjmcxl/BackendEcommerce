@@ -2,6 +2,9 @@ package com.ecommerce.ecommerce.model.Dto;
 
 import com.ecommerce.ecommerce.model.entities.User;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 public record ListUserDTO(
 
         Long id,
@@ -9,7 +12,7 @@ public record ListUserDTO(
 
         String email,
         String address,
-        Number identification,
+        BigInteger identification,
 
        String rol
 
@@ -18,4 +21,6 @@ public record ListUserDTO(
     public ListUserDTO(User user) {
         this(user.getId(), user.getName(), user.getEmail(), user.getAddress(), user.getIdentification(), user.getRol());
     }
+
+
 }

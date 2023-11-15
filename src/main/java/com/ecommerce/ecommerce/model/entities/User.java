@@ -10,6 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,10 +28,11 @@ public class User implements UserDetails {
     private String name;
     private String address;
     private String password;
-    private String email ;
-    private String rol;
     @Column(unique = true)
-    private Number identification;
+    private String email ;
+    private String rol ="ROLE_USER";
+    @Column(unique = true)
+    private BigInteger identification;
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
@@ -39,13 +42,16 @@ public class User implements UserDetails {
         this.password= new BCryptPasswordEncoder().encode(registerUserDTO.password());
         this.address=registerUserDTO.address();
         this.identification=registerUserDTO.identification();
-        this.rol=registerUserDTO.rol();
+        if(registerUserDTO.rol()!=null){
+            this.rol=registerUserDTO.rol();
+        }
+
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(this.rol));
     }
 
     @Override
