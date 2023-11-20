@@ -93,7 +93,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret); // validando firma
             verifier = JWT.require(algorithm)
-                    .withIssuer("alura")
+                    .withIssuer("ecommerce")
                     .build()
                     .verify(token);
             verifier.getSubject();
